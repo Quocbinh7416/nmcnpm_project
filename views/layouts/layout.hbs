@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>E Learning</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Bootstrap Ecommerce Template" name="keywords">
+    <meta content="Bootstrap Ecommerce Template Free Download" name="description">
+
+    <!-- Favicon -->
+    <link href="img/favicon.svg" rel="icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700&display=swap" rel="stylesheet">
+
+    <!-- CSS Libraries -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/lib/slick/slick.css" rel="stylesheet">
+    <link href="/lib/slick/slick-theme.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Top Header Start -->
+    <div class="top-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <div class="logo">
+                        <a href="/">
+                            <img src="/img/logo.png" alt="Logo">
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="search">
+                        <h1>E LEARNING</h1>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="user">
+                        {{#if isLoggedIn}}
+                        <div class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">My Account</a>
+                            <div class="dropdown-menu">
+                                <a href="/users/history" class="dropdown-item">History</a>
+                                <a href="/users/newchat" class="dropdown-item">NewChat</a>
+                                <a href="/users/logout" class="dropdown-item">Logout</a>
+                            </div>
+                        </div>
+                        {{else}}
+                        <div class="dropdown">
+                            <a href="/login">Login of Register</a>
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Top Header End -->
+
+
+
+
+    {{{body}}}
+
+
+
+
+    <!-- Back to Top -->
+    <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="/lib/easing/easing.min.js"></script>
+    <script src="/lib/slick/slick.min.js"></script>
+
+
+    <!-- Template Javascript -->
+    <script src="/js/main.js"></script>
+    <script src="/js/23880008.js"></script>
+</body>
+
+</html>
