@@ -6,12 +6,40 @@ const express = require("express");
 const expressHandlebars = require("express-handlebars");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const http = require("http");
+const { Server } = require("socket.io");
+const multer = require("multer");
+const fs = require("fs");
+const path = require("path");
+const speech = require("@google-cloud/speech");
+
+const googleClient = new speech.SpeechClient({
+  keyFilename: path.join(__dirname, "config", "google-service-account-key.json"),
+});
+
+exports.default = googleClient;
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 const port = process.env.PORT || 5000;
 
 // Cau hinh public static folder
-app.use(express.static(__dirname + "/public"));
+app.use(express.static(path.join(__dirname, "public")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// --- Multer for file uploads ---
+// Configure storage for audio files
+const audioStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/"); // Store files in the 'uploads' directory
+  },
+  filename: function (req, file, cb) {
+    // Generate a unique filename
+    cb(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname));
+  },
+});
+const uploadAudio = multer({ storage: audioStorage });
 
 // // Cau hinh su dung express-handlebars
 app.engine(
@@ -24,7 +52,19 @@ app.engine(
     runtimeOptions: {
       allowProtoPropertiesByDefault: true,
     },
-    helpers: {},
+    helpers: {
+      equals: (a, b) => a === b,
+      formatDate: (date) => {
+        return date.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+      },
+    },
   })
 );
 app.set("view engine", "hbs");
@@ -38,6 +78,9 @@ app.use(express.urlencoded({ extended: false }));
 // routes
 app.use("/", require("./routes/indexRouter"));
 
+// Endpoint for audio file uploads
+app.use("/upload-audio", require("./routes/audioRouter"));
+
 // errors
 app.use((req, res, next) => {
   res.status(404).render("error", { message: "File not Found!" });
@@ -47,7 +90,21 @@ app.use((error, req, res, next) => {
   res.status(500).render("error", { message: "Internal Server Error!" });
 });
 
+// --- Socket.IO ---
+io.on("connection", (socket) => {
+  console.log("a user connected", socket.id);
+
+  // Handle chat messages (text or audio URLs)
+  socket.on("chat message", (msg) => {
+    console.log("Received message:", msg);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("user disconnected", socket.id);
+  });
+});
+
 // Khoi dong web server
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

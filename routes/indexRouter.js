@@ -11,8 +11,8 @@ const controller = require("../controllers/indexController");
 //     });
 // });
 
-router.get("/", controller.showHomepage);
+router.get("/", controller.showChat);
 
-// router.get('/:page', controller.showPage);
+router.post("/", controller.createMessage);
 
 module.exports = router;

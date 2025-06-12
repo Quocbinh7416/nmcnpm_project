@@ -1,28 +1,31 @@
-const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('conversation', {
-    id: {
-      type: DataTypes.UUID,
-      allowNull: false,
-      primaryKey: true
-    },
-    user_id: {
-      type: DataTypes.STRING(255),
-      allowNull: true
-    }
-  }, {
-    sequelize,
-    tableName: 'conversation',
-    schema: 'public',
-    timestamps: false,
-    indexes: [
-      {
-        name: "conversation_pk",
-        unique: true,
-        fields: [
-          { name: "id" },
-        ]
+const Sequelize = require("sequelize");
+module.exports = (sequelize, DataTypes) => {
+  const Conversation = sequelize.define(
+    "conversation",
+    {
+      id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        primaryKey: true,
+        defaultValue: DataTypes.UUIDV4,
       },
-    ]
-  });
+      user_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+    },
+    {
+      tableName: "conversation",
+      timestamps: false,
+    }
+  );
+
+  Conversation.associate = (models) => {
+    Conversation.hasMany(models.message, {
+      foreignKey: "conversation_id", // Foreign key in the message table
+      as: "messages", // Alias for eager loading
+    });
+  };
+
+  return Conversation;
 };

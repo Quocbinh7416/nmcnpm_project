@@ -1998,3 +1998,61 @@ button.btn {
         overflow-x: auto
     }
 }
+
+.input-area {
+    display: flex;
+    padding: 10px;
+    gap: 10px;
+    border-top: 1px solid #eee;
+}
+
+#textInput {
+    flex-grow: 1;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    font-size: 16px;
+}
+
+#sendTextBtn, .record-button, .cancel-record-button {
+    /* background-color: #007bff; */
+    /* color: white; */
+    border: 1px solid #ced4da;
+    /* padding: 10px 15px; */
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+}
+
+#sendTextBtn:hover, .record-button:hover, .cancel-record-button:hover {
+    background-color: #343a40;
+    color: #f8f9fa;
+}
+
+.record-button {
+    min-width: 50px; /* Give some width for text changes */
+}
+
+.record-button img {
+    margin-right: 5px; /* Space between icon and text */
+}
+
+.record-button.recording-active {
+    background-color: #dc3545; /* Red during recording */
+}
+
+.record-timer {
+    margin-left: 5px; /* Space from text */
+    font-size: 0.9em;
+}
+
+.cancel-record-button {
+    background-color: #6c757d; /* Gray for cancel */
+}
+
+.cancel-record-button:hover {
+    background-color: #5a6268;
+}
