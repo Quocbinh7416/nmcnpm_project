@@ -8,6 +8,8 @@ const recordIcon = document.getElementById("recordIcon");
 const recordText = document.getElementById("recordText");
 const recordTimer = recordBtn.querySelector(".record-timer");
 const cancelRecordBtn = document.getElementById("cancelRecordBtn");
+const userId = document.getElementById("userId").innerText;
+const conversationId = document.getElementById("conversationId").innerText;
 
 let mediaRecorder;
 let audioChunks = [];
@@ -18,19 +20,19 @@ let isCancelled = false; // Flag to indicate if recording was explicitly cancell
 
 // --- Helper Functions ---
 function appendMessage(message, type) {
-  const messageBubble = document.createElement("div");
-  messageBubble.classList.add("message-bubble", type);
+  // const messageBubble = document.createElement("div");
+  // messageBubble.classList.add("message-bubble", type);
 
   if (message.type === "text") {
-    messageBubble.textContent = message.content;
+    // messageBubble.textContent = message.content;
   } else if (message.type === "audio") {
     const audioElement = document.createElement("audio");
     audioElement.controls = true;
     audioElement.src = message.content; // The URL to the audio file
     messageBubble.appendChild(audioElement);
   }
-  messagesDisplay.appendChild(messageBubble);
-  messagesDisplay.scrollTop = messagesDisplay.scrollHeight; // Scroll to bottom
+  // messagesDisplay.appendChild(messageBubble);
+  // messagesDisplay.scrollTop = messagesDisplay.scrollHeight; // Scroll to bottom
 }
 
 function formatTime(seconds) {
@@ -40,12 +42,12 @@ function formatTime(seconds) {
 }
 
 // --- Text Message Handling ---
-sendTextBtn.addEventListener("click", () => {
+sendTextBtn.addEventListener("click", async () => {
   const text = textInput.value.trim();
   if (text) {
-    const message = { type: "text", content: text };
+    const message = { type: "text", content: text, userId: userId, conversationId: conversationId, role: "user" };
     socket.emit("chat message", message);
-    appendMessage(message, "sent"); // Display immediately as sent
+    // appendMessage(message, "sent"); // Display immediately as sent
     textInput.value = "";
   }
 });
@@ -159,10 +161,11 @@ async function uploadAudio(audioBlob) {
     });
     const data = await response.json();
     if (response.ok) {
-      console.log("Audio uploaded successfully:", data.audioUrl);
-      const message = { type: "audio", content: data.audioUrl };
-      socket.emit("chat message", message); // Send audio URL via Socket.IO
-      appendMessage(message, "sent"); // Display immediately as sent
+      if (data && data.transcription !== undefined && data.transcription !== null && data.transcription !== "") {
+        console.log("Audio uploaded successfully:", data);
+        const message = { type: "text", content: data.transcription, userId: userId, conversationId: conversationId, role: "user" };
+        socket.emit("chat message", message);
+      }
     } else {
       console.error("Audio upload failed:", data.error);
       alert("Failed to upload audio.");
@@ -176,10 +179,59 @@ async function uploadAudio(audioBlob) {
 // --- Socket.IO Message Handling (Same as before) ---
 socket.on("chat message", (msg) => {
   console.log("Received message:", msg);
-  appendMessage(msg, "received");
+  // appendMessage(msg, "received");
+});
+
+socket.on("chat response", async (msg) => {
+  console.log("Received response message:", msg);
+  msg.result.forEach((msg) => {
+    if (msg && msg.role) {
+      appendChatMessage(msg); // Append each message to the chat history
+    }
+  });
+  scrollToBottom();
+  // appendMessage(msg, "received");
 });
 
 // Initial greeting from server (optional)
 socket.on("connect", () => {
   console.log("Connected to chat server!");
 });
+
+function scrollToBottom() {
+  const chatHistory = document.getElementById("chatHistory");
+  if (chatHistory) {
+    setTimeout(() => {
+      chatHistory.scrollTop = chatHistory.scrollHeight;
+    }, 2); // Delay to ensure DOM updates are complete
+  }
+}
+
+function appendChatMessage(message) {
+  // Find the <ul> container
+  const chatHistory = document.getElementById("chatHistory");
+  const ulElement = chatHistory.querySelector("ul"); // Locate the <ul> inside chat-history
+
+  // Create the <li> element
+  const liElement = document.createElement("li");
+  liElement.classList.add("clearfix");
+
+  // Create the <div> element for the message content
+  const divElement = document.createElement("div");
+  divElement.classList.add("message");
+  if (message.role === "user") {
+    divElement.classList.add("my-message");
+  } else {
+    divElement.classList.add("other-message", "float-right");
+  }
+  divElement.textContent = message.content; // Set dynamic content
+
+  // Append the <div> to the <li>
+  liElement.appendChild(divElement);
+
+  // Append the <li> to the <ul>
+  ulElement.appendChild(liElement);
+
+  // Scroll to the bottom
+  chatHistory.scrollTop = chatHistory.scrollHeight;
+}

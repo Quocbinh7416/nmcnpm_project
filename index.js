@@ -12,6 +12,7 @@ const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
 const speech = require("@google-cloud/speech");
+const chatController = require("./controllers/chatController");
 
 const googleClient = new speech.SpeechClient({
   keyFilename: path.join(__dirname, "config", "google-service-account-key.json"),
@@ -27,19 +28,6 @@ const port = process.env.PORT || 5000;
 // Cau hinh public static folder
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
-// --- Multer for file uploads ---
-// Configure storage for audio files
-const audioStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/"); // Store files in the 'uploads' directory
-  },
-  filename: function (req, file, cb) {
-    // Generate a unique filename
-    cb(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname));
-  },
-});
-const uploadAudio = multer({ storage: audioStorage });
 
 // // Cau hinh su dung express-handlebars
 app.engine(
@@ -80,6 +68,7 @@ app.use("/", require("./routes/indexRouter"));
 
 // Endpoint for audio file uploads
 app.use("/upload-audio", require("./routes/audioRouter"));
+app.use("/chat", require("./routes/chatRouter"));
 
 // errors
 app.use((req, res, next) => {
@@ -95,8 +84,17 @@ io.on("connection", (socket) => {
   console.log("a user connected", socket.id);
 
   // Handle chat messages (text or audio URLs)
-  socket.on("chat message", (msg) => {
-    console.log("Received message:", msg);
+  socket.on("chat message", async (msg) => {
+    try {
+      // Call the chatController logic directly
+      const response = await chatController.handleChatMessage(msg);
+      if (response && response.success) {
+        socket.emit("chat response", response);
+      }
+    } catch (error) {
+      console.error("Error handling chat message:", error);
+      socket.emit("chat response", { error: "Failed to process message." });
+    }
   });
 
   socket.on("disconnect", () => {

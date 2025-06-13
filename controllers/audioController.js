@@ -71,6 +71,7 @@ controller.recordAudio = async (req, res) => {
       encoding: "FLAC", // Match the converted format
       sampleRateHertz: 16000,
       languageCode: "en-US", // Adjust language as needed (e.g., 'vi-VN' for Vietnamese)
+      alternativeLanguageCodes: ["vi-VN"],
       enableAutomaticPunctuation: true, // Recommended for better readability
       // enableSpeakerDiarization: true, // Uncomment if you need to identify speakers
       // diarizationSpeakerCount: 2, // If using diarization, specify max speakers
