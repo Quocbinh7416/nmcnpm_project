@@ -13,7 +13,7 @@ ffmpeg.setFfmpegPath(ffmpegPath);
 
 const googleClient = require("../index").default; // Import the Google Speech-to-Text client
 
-const uploadsDir = path.join(__dirname, "../uploads");
+const uploadsDir = path.join(__dirname, "uploads");
 // Ensure the uploads directory exists
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
