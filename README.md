@@ -21,3 +21,4 @@ CREATE TABLE public.message (
 	CONSTRAINT message_fk FOREIGN KEY (conversation_id) REFERENCES public.conversation(id)
 );
 
+translation
