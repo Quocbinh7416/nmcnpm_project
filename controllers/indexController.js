@@ -5,7 +5,9 @@ const models = require("../models");
 const chatController = require("./chatController");
 
 controller.showHomepage = async (req, res) => {
-  res.render("index");
+  let conversationId = "abb01339-7cd8-49d3-bc0f-885ff6516792"; // Default to null if no conversations found
+  let userId = 1;
+  res.render("chat", { conversationId, userId });
 };
 
 // controller.showPage = async (req, res, next) => {

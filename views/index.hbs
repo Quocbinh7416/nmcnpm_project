@@ -1,144 +1,57 @@
-<div class="container">
-    <div class="row clearfix">
-        <div class="col-lg-12">
-            <div class="card chat-app">
-                {{!-- <div id="plist" class="people-list">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-search"></i></span>
-                        </div>
-                        <input type="text" class="form-control" placeholder="Search...">
-                    </div>
-                    <ul class="list-unstyled chat-list mt-2 mb-0">
-                        <li class="clearfix">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
-                            <div class="about">
-                                <div class="name">Vincent Porter</div>
-                                <div class="status"> <i class="fa fa-circle offline"></i> left 7 mins ago </div>
-                            </div>
-                        </li>
-                        <li class="clearfix active">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
-                            <div class="about">
-                                <div class="name">Aiden Chavez</div>
-                                <div class="status"> <i class="fa fa-circle online"></i> online </div>
-                            </div>
-                        </li>
-                        <li class="clearfix">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="avatar">
-                            <div class="about">
-                                <div class="name">Mike Thomas</div>
-                                <div class="status"> <i class="fa fa-circle online"></i> online </div>
-                            </div>
-                        </li>
-                        <li class="clearfix">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">
-                            <div class="about">
-                                <div class="name">Christian Kelly</div>
-                                <div class="status"> <i class="fa fa-circle offline"></i> left 10 hours ago </div>
-                            </div>
-                        </li>
-                        <li class="clearfix">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar8.png" alt="avatar">
-                            <div class="about">
-                                <div class="name">Monica Ward</div>
-                                <div class="status"> <i class="fa fa-circle online"></i> online </div>
-                            </div>
-                        </li>
-                        <li class="clearfix">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="avatar">
-                            <div class="about">
-                                <div class="name">Dean Henry</div>
-                                <div class="status"> <i class="fa fa-circle offline"></i> offline since Oct 28 </div>
-                            </div>
-                        </li>
-                    </ul>
-                </div> --}}
-                <div class="chat">
-                    <div class="chat-header clearfix">
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <a href="javascript:void(0);" data-toggle="modal" data-target="#view_info">
-                                    <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
-                                </a>
-                                <div class="chat-about">
-                                    <h6 class="m-b-0">Aiden Chavez</h6>
-                                    <h6 class="m-b-0">I'm your AI friend</h6>
-                                    {{!-- <small>Last seen: 2 hours ago</small> --}}
-                                </div>
-                            </div>
-                            {{!-- <div class="col-lg-6 hidden-sm text-right">
-                                <a href="javascript:void(0);" class="btn btn-outline-secondary"><i
-                                        class="fa fa-camera"></i></a>
-                                <a href="javascript:void(0);" class="btn btn-outline-primary"><i
-                                        class="fa fa-image"></i></a>
-                                <a href="javascript:void(0);" class="btn btn-outline-info"><i
-                                        class="fa fa-cogs"></i></a>
-                                <a href="javascript:void(0);" class="btn btn-outline-warning"><i
-                                        class="fa fa-question"></i></a>
-                            </div> --}}
-                        </div>
-                    </div>
-                    <div class="chat-history">
-                        <ul class="m-b-0">
-                            {{#each messages}}
-                            {{#if (equals role "user")}}
-                            <li class="clearfix">
-                                <div class="message-data text-right">
-                                    <span class="message-data-time">{{formatDate created}}</span>
-                                    <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">
-                                </div>
-                                <div class="message other-message float-right"> {{content}} </div>
-                            </li>
-                            {{else}}
-                            <li class="clearfix">
-                                <div class="message-data">
-                                    <span class="message-data-time">{{formatDate created}}</span>
-                                </div>
-                                <div class="message my-message">{{content}}</div>
-                            </li>
-                            {{/if}}
-                            {{/each}}
-                        </ul>
-                    </div>
-                    <div class="chat-message clearfix">
-                        <div class="input-group mb-0">
-                            <input type="text" class="form-control" placeholder="Enter text here..." name="chatMessage"
-                                id="textInput">
-                            <div class="input-group-prepend">
-                                <button type="submit" class="input-group-text" id="sendTextBtn">
-                                    <i class="fa fa-send"></i>
-                                </button>
-                            </div>
-                            <div class="input-group-prepend">
-                                <button id="recordBtn" class="record-button">
-                                    <i class="fa fa-microphone" aria-hidden="true" id="recordIcon"></i>
-                                    <span class="record-text" id="recordText"></span>
-                                    <span class="record-timer" style="display: none;">00:00</span>
-                                </button>
-                                <button id="cancelRecordBtn" class="cancel-record-button" style="display: none;"><i
-                                        class="fa fa-ban" aria-hidden="true"></i></button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<div class="main-layout d-flex">
+    <!-- Sidebar -->
+    <aside class="sidebar d-flex flex-column" id="sidebar">
+        <div class="sidebar-header d-flex align-items-center justify-content-between p-3">
+            <span class="sidebar-title fw-bold fs-4">Chatbot</span>
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-light btn-circle" id="new-chat-btn" title="Cuộc trò chuyện mới"><i
+                        class="fa fa-plus"></i></button>
+                <button class="btn btn-light btn-circle" id="toggle-sidebar-btn" title="Thu gọn/mở rộng"><i
+                        class="fa fa-angle-left"></i></button>
             </div>
         </div>
-    </div>
+        <div class="sidebar-history flex-grow-1 px-2" id="sidebar-history">
+            <ul class="list-group list-group-flush" id="chat-history-list"></ul>
+        </div>
+        <div class="sidebar-footer p-3 d-flex align-items-center">
+            <span class="user-status"><i class="fa fa-circle me-2" style="color: #ff9800;"></i>Guest</span>
+            <span class="ms-auto"><i class="fa fa-chevron-up"></i></span>
+        </div>
+    </aside>
+    <!-- Main chat -->
+    <main class="chat-main flex-grow-1 d-flex flex-column">
+        <div style="display: none;">
+            <div id="userId">{{userId}}</div>
+            <div id="conversationId">{{conversationId}}</div>
+        </div>
+        <div class="chat-content flex-grow-1 d-flex flex-column align-items-center justify-content-center"
+            id="chat-content">
+            <div class="welcome-message text-center" id="welcome-message">
+                <h1 class="fw-bold mb-2">Hello there!</h1>
+                <p class="fs-5 text-secondary mb-4">How can I help you today?</p>
+                <div class="suggestions row row-cols-1 row-cols-md-2 g-3 justify-content-center" id="suggestions">
+                    <div class="col"><button class="btn btn-suggestion w-100">How to improve English
+                            speaking?</button></div>
+                    <div class="col"><button class="btn btn-suggestion w-100">Tips for learning English
+                            vocabulary</button></div>
+                    <div class="col"><button class="btn btn-suggestion w-100">Common English grammar
+                            mistakes</button></div>
+                    <div class="col"><button class="btn btn-suggestion w-100">Best resources for English listening
+                            practice</button></div>
+                </div>
+            </div>
+            <div class="chat-body w-100 d-none flex-column px-0 px-md-5" id="chat-messages"></div>
+        </div>
+        <div class="chat-input-area p-3">
+            <div id="suggestions-fixed" class="mb-2"></div>
+            <div class="input-group rounded-pill shadow-sm">
+                <button class="btn btn-link attach-btn" id="attach-btn" title="Đính kèm"><i
+                        class="fa fa-paperclip"></i></button>
+                <input type="text" id="user-input" class="form-control border-0" placeholder="Send a message...">
+                <button class="btn btn-link" id="mic-btn" title="Nói"><i class="fa fa-microphone" aria-hidden="true"
+                        id="recordIcon"></i></button>
+                <button class="btn btn-link" id="send-btn" title="Gửi"><i class="fa fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </main>
 </div>
-
-{{!-- <div class="chat-container">
-    <div class="messages-display" id="messagesDisplay">
-    </div>
-    <div class="input-area">
-        <input type="text" id="textInput" placeholder="Type a message...">
-        <button id="sendTextBtn">Send</button>
-
-        <button id="recordBtn" class="record-button">
-            <img src="/microphone.svg" alt="Record" width="24" height="24" id="recordIcon">
-            <span class="record-text" id="recordText">Record</span>
-            <span class="record-timer" style="display: none;">00:00</span>
-        </button>
-        <button id="cancelRecordBtn" class="cancel-record-button" style="display: none;">Cancel</button>
-    </div>
-</div> --}}

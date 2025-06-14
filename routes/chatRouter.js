@@ -6,4 +6,6 @@ const controller = require("../controllers/chatController");
 
 router.get("/", controller.showChat);
 
+router.post("/", controller.createChatMessage);
+
 module.exports = router;
