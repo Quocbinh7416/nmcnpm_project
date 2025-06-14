@@ -37,24 +37,25 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="search">
+                    <div class="search text-center">
                         <h1>EngBreaking</h1>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="user">
+                <div class="col-md-3 text-align-right">
+                    <div class="user justify-content-end d-flex">
                         {{#if isLoggedIn}}
+                        <div class="px-3">Hi {{email}}</div>
                         <div class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">My Account</a>
                             <div class="dropdown-menu">
-                                <a href="/users/history" class="dropdown-item">History</a>
-                                <a href="/users/newchat" class="dropdown-item">NewChat</a>
+                                <a href="/chat/history" class="dropdown-item">History</a>
+                                <a href="/chat/newchat" class="dropdown-item">NewChat</a>
                                 <a href="/users/logout" class="dropdown-item">Logout</a>
                             </div>
                         </div>
                         {{else}}
                         <div class="dropdown">
-                            <a href="/login">Login of Register</a>
+                            <a href="/">Login or Register</a>
                         </div>
                         {{/if}}
                     </div>
@@ -65,15 +66,46 @@
     <!-- Top Header End -->
 
 
+    <!-- Header Start -->
+    <div class="header">
+        <div class="container">
+            <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+                <a href="#" class="navbar-brand">MENU</a>
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                    <div class="navbar-nav m-auto">
+                        <a href="/" class="nav-item nav-link active">Home</a>
+                        {{#if isLoggedIn}}
+                        <a href="/chat/{{userId}}" class="nav-item nav-link">Chat</a>
+                        {{else}}
+                        <a href="/chat-guest" class="nav-item nav-link">Chat</a>
+                        {{/if}}
+                        {{!-- <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
+                            <div class="dropdown-menu">
+                                <a href="/products" class="dropdown-item">Product</a>
+                                <a href="/product-detail" class="dropdown-item">Product Detail</a>
+                                <a href="/cart" class="dropdown-item">Cart</a>
+                                <a href="/wishlist" class="dropdown-item">Wishlist</a>
+                                <a href="/checkout" class="dropdown-item">Checkout</a>
+                                <a href="/login" class="dropdown-item">Login & Register</a>
+                                <a href="/users/my-account" class="dropdown-item">My Account</a>
+                            </div>
+                        </div> --}}
+                        {{!-- <a href="/contact" class="nav-item nav-link">Contact Us</a> --}}
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <!-- Header End -->
+
 
 
     {{{body}}}
-
-
-
-
-    <!-- Back to Top -->
-    <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
 
 
     <!-- JavaScript Libraries -->
@@ -88,6 +120,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/client.js"></script>
     <script src="/js/script.js"></script>
+    <script src="/js/account.js"></script>
 </body>
 
 </html>

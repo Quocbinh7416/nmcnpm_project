@@ -1,57 +1,91 @@
-<div class="main-layout d-flex">
-    <!-- Sidebar -->
-    <aside class="sidebar d-flex flex-column" id="sidebar">
-        <div class="sidebar-header d-flex align-items-center justify-content-between p-3">
-            <span class="sidebar-title fw-bold fs-4">Chatbot</span>
-            <div class="d-flex align-items-center gap-2">
-                <button class="btn btn-light btn-circle" id="new-chat-btn" title="Cuộc trò chuyện mới"><i
-                        class="fa fa-plus"></i></button>
-                <button class="btn btn-light btn-circle" id="toggle-sidebar-btn" title="Thu gọn/mở rộng"><i
-                        class="fa fa-angle-left"></i></button>
-            </div>
-        </div>
-        <div class="sidebar-history flex-grow-1 px-2" id="sidebar-history">
-            <ul class="list-group list-group-flush" id="chat-history-list"></ul>
-        </div>
-        <div class="sidebar-footer p-3 d-flex align-items-center">
-            <span class="user-status"><i class="fa fa-circle me-2" style="color: #ff9800;"></i>Guest</span>
-            <span class="ms-auto"><i class="fa fa-chevron-up"></i></span>
-        </div>
-    </aside>
-    <!-- Main chat -->
-    <main class="chat-main flex-grow-1 d-flex flex-column">
-        <div style="display: none;">
-            <div id="userId">{{userId}}</div>
-            <div id="conversationId">{{conversationId}}</div>
-        </div>
-        <div class="chat-content flex-grow-1 d-flex flex-column align-items-center justify-content-center"
-            id="chat-content">
-            <div class="welcome-message text-center" id="welcome-message">
-                <h1 class="fw-bold mb-2">Hello there!</h1>
-                <p class="fs-5 text-secondary mb-4">How can I help you today?</p>
-                <div class="suggestions row row-cols-1 row-cols-md-2 g-3 justify-content-center" id="suggestions">
-                    <div class="col"><button class="btn btn-suggestion w-100">How to improve English
-                            speaking?</button></div>
-                    <div class="col"><button class="btn btn-suggestion w-100">Tips for learning English
-                            vocabulary</button></div>
-                    <div class="col"><button class="btn btn-suggestion w-100">Common English grammar
-                            mistakes</button></div>
-                    <div class="col"><button class="btn btn-suggestion w-100">Best resources for English listening
-                            practice</button></div>
+<div class="container d-flex justify-content-between py-5">
+    <!-- Left Section: Description -->
+    <div class="left-section">
+        <h1>EngBreaking</h1>
+        <h3>Lifelong Learning</h3>
+        <hr>
+        <p>
+            Nguyễn Quốc Bình - 23880008
+        </p>
+
+        <p>
+            Võ Xuân Tú - 23880094
+        </p>
+
+        <p>
+            Võ Vĩnh Nghi - 23880047
+        </p>
+
+        <p>
+            Nguyễn Quốc Bình
+        </p>
+    </div>
+
+    <!-- Right Section: Login Form -->
+    <div class="right-section">
+        <div class="login-form-container">
+            <h2>Welcome Back!</h2>
+            <form action="/users/login" method="POST">
+                <div class="form-group">
+                    <label for="email">Email or Username</label>
+                    <input type="text" id="email" name="email" placeholder="Enter your email or username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn-primary">Log In</button>
+            </form>
+            <div class="links d-flex justify-content-center mt-3">
+                <a href="/chat-guest">Login as Guest</a>
+                <span>&bull;</span>
+
+                <!-- Button trigger modal -->
+                <div type="button" class="links-btn" data-toggle="modal" data-target="#signUpModal">
+                    Create an Account
                 </div>
             </div>
-            <div class="chat-body w-100 d-none flex-column px-0 px-md-5" id="chat-messages"></div>
         </div>
-        <div class="chat-input-area p-3">
-            <div id="suggestions-fixed" class="mb-2"></div>
-            <div class="input-group rounded-pill shadow-sm">
-                <button class="btn btn-link attach-btn" id="attach-btn" title="Đính kèm"><i
-                        class="fa fa-paperclip"></i></button>
-                <input type="text" id="user-input" class="form-control border-0" placeholder="Send a message...">
-                <button class="btn btn-link" id="mic-btn" title="Nói"><i class="fa fa-microphone" aria-hidden="true"
-                        id="recordIcon"></i></button>
-                <button class="btn btn-link" id="send-btn" title="Gửi"><i class="fa fa-paper-plane"></i></button>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="signUpModal" tabindex="-1" role="dialog" aria-labelledby="signUpModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="signUpModalLabel">Create new account</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="/users/register" method="post" id="formRegister">
+                    <div class="my-3">
+                        <label class="form-label" for="email">E-mail / Username</label>
+                        <input class="form-control" type="text" placeholder="Email" name="email" required>
+                    </div>
+                    <div class="my-3">
+                        <label class="form-label" for="password">Password</label>
+                        <input class="form-control" type="password" placeholder="Password" name="password" required
+                            id="passwordRegister"
+                            title="Must contain at least one  number and one uppercase and lowercase letter, and at least 8 or more characters"
+                            onchange="checkPasswordConfirm('formRegister')">
+
+                        <input type="checkbox" onclick="togglePass('passwordRegister')"> show password
+                    </div>
+                    <div class="my-3">
+                        <label class="form-label" for="confirmPassword">Confirm Password</label>
+                        <input class="form-control" type="password" placeholder="Confirm Password"
+                            name="confirmPassword" onkeyup="checkPasswordConfirm('formRegister')" id="confirmPassword">
+
+                        <input type="checkbox" onclick="togglePass('confirmPassword')"> show password
+                    </div>
+                    <button type="submit" class="btn btn-primary">Register</button>
+                </form>
             </div>
         </div>
-    </main>
+    </div>
 </div>
+{{!-- pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" --}}

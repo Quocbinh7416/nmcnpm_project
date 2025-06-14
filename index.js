@@ -8,11 +8,18 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
-const multer = require("multer");
-const fs = require("fs");
 const path = require("path");
 const speech = require("@google-cloud/speech");
-const chatController = require("./controllers/chatController");
+const session = require("express-session");
+
+const redisStore = require("connect-redis").default;
+const { createClient } = require("redis");
+const redisClient = createClient({
+  url: process.env.REDIS_URL || "redis://localhost:6379",
+});
+redisClient.connect().catch(console.error);
+const passport = require("./controllers/passport");
+const flash = require("connect-flash");
 
 const googleClient = new speech.SpeechClient({
   credentials: {
@@ -28,7 +35,20 @@ const googleClient = new speech.SpeechClient({
     client_x509_cert_url: process.env.GOOGLE_CLIENT_CERT_URL,
   },
 });
-exports.default = googleClient;
+
+const { OpenAI } = require("openai");
+
+const azureOpenAI = new OpenAI({
+  baseURL: process.env.OPENAI_BASE_URL,
+  apiKey: process.env.OPENAI_AZURE_API_KEY,
+});
+
+const openAI = new OpenAI({
+  baseURL: "https://api.openai.com/v1",
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+exports.default = { googleClient, azureOpenAI, openAI };
 
 const app = express();
 const server = http.createServer(app);
@@ -73,15 +93,42 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
 
+// cau hinh su dung session
+app.use(
+  session({
+    secret: process.env.REDIS_URL || "redis://localhost:6379",
+    store: new redisStore({ client: redisClient }),
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      maxAge: 20 * 60 * 1000, //20 mins
+    },
+  })
+);
+// cau hinh su dung passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// cau hinh su dung connect-flash
+app.use(flash());
+
 // routes
 app.use("/", require("./routes/indexRouter"));
-
-// Endpoint for audio file uploads
 app.use("/upload-audio", require("./routes/audioRouter"));
+app.use("/chat-guest", require("./routes/chatGuestRouter"));
+
+app.use("/users", require("./routes/userRouter"));
+// middleware khoi tao gio hang
+app.use((req, res, next) => {
+  res.locals.isLoggedIn = req.isAuthenticated();
+  next();
+});
 app.use("/chat", require("./routes/chatRouter"));
 
 // errors
 app.use((req, res, next) => {
+  console.log("404 Not Found:", req.originalUrl);
   res.status(404).render("error", { message: "File not Found!" });
 });
 app.use((error, req, res, next) => {
@@ -89,28 +136,28 @@ app.use((error, req, res, next) => {
   res.status(500).render("error", { message: "Internal Server Error!" });
 });
 
-// --- Socket.IO ---
-io.on("connection", (socket) => {
-  console.log("a user connected", socket.id);
+// // --- Socket.IO ---
+// io.on("connection", (socket) => {
+//   console.log("a user connected", socket.id);
 
-  // Handle chat messages (text or audio URLs)
-  socket.on("chat message", async (msg) => {
-    try {
-      // Call the chatController logic directly
-      const response = await chatController.handleChatMessage(msg);
-      if (response && response.success) {
-        socket.emit("chat response", response);
-      }
-    } catch (error) {
-      console.error("Error handling chat message:", error);
-      socket.emit("chat response", { error: "Failed to process message." });
-    }
-  });
+//   // Handle chat messages (text or audio URLs)
+//   socket.on("chat message", async (msg) => {
+//     try {
+//       // Call the chatController logic directly
+//       const response = await chatController.handleChatMessage(msg);
+//       if (response && response.success) {
+//         socket.emit("chat response", response);
+//       }
+//     } catch (error) {
+//       console.error("Error handling chat message:", error);
+//       socket.emit("chat response", { error: "Failed to process message." });
+//     }
+//   });
 
-  socket.on("disconnect", () => {
-    console.log("user disconnected", socket.id);
-  });
-});
+//   socket.on("disconnect", () => {
+//     console.log("user disconnected", socket.id);
+//   });
+// });
 
 // Khoi dong web server
 server.listen(port, () => {

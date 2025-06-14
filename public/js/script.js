@@ -11,6 +11,10 @@ const attachBtn = document.getElementById("attach-btn");
 const toggleSidebarBtn = document.getElementById("toggle-sidebar-btn");
 const sidebar = document.getElementById("sidebar");
 const suggestionsFixed = document.getElementById("suggestions-fixed");
+const userId = document.getElementById("userId") && document.getElementById("userId").innerText ? document.getElementById("userId").innerText : 0;
+
+const GUEST_MESSEGE_LIMIT = 15; // Giới hạn số lượng tin nhắn cho khách
+const GUEST_CONVERSATION_LIMIT = 3; // Giới hạn số lượng cuộc trò chuyện cho khách
 
 let recognition = null;
 let conversations = JSON.parse(localStorage.getItem("conversations") || "{}");
@@ -42,6 +46,14 @@ function saveConversations() {
 }
 
 function renderChatHistory() {
+  if (!chatHistoryList) {
+    return;
+  }
+
+  if (userId !== 0) {
+    return; // Không hiển thị lịch sử trò chuyện cho khách
+  }
+
   chatHistoryList.innerHTML = "";
   Object.entries(conversations).forEach(([id, conv]) => {
     const li = document.createElement("li");
@@ -82,6 +94,13 @@ function selectConversation(id) {
 }
 
 function renderMessages() {
+  if (!chatMessages) {
+    return;
+  }
+
+  if (userId !== 0) {
+    return; // Không hiển thị lịch sử trò chuyện cho khách
+  }
   chatMessages.innerHTML = "";
   if (!currentChatId || !conversations[currentChatId]) {
     showWelcome(true);
@@ -109,12 +128,18 @@ function showWelcome(show) {
 }
 
 function startNewChat() {
-  const id = generateId();
-  conversations[id] = { title: "Cuộc trò chuyện mới", messages: [] };
-  currentChatId = id;
-  saveConversations();
-  renderChatHistory();
-  renderMessages();
+  if (userId === 0) {
+    if (Object.keys(conversations).length >= GUEST_CONVERSATION_LIMIT) {
+      alert("Bạn chỉ có thể lưu tối đa 5 cuộc trò chuyện. Vui lòng xóa một cuộc trò chuyện trước khi tạo mới.");
+      return;
+    }
+    const id = generateId();
+    conversations[id] = { title: "Cuộc trò chuyện mới", messages: [] };
+    currentChatId = id;
+    saveConversations();
+    renderChatHistory();
+    renderMessages();
+  }
 }
 
 if (Object.keys(conversations).length === 0) {
@@ -127,27 +152,47 @@ if (Object.keys(conversations).length === 0) {
 
 let isListening = false; // Flag to track recognition state
 
-micBtn.addEventListener("click", async () => {
-  if (!isListening) {
-    isListening = true;
-    micBtn.classList.add("active");
-    startRecording();
-    console.log("Speech recognition started for both languages.");
-  } else {
-    isListening = false;
-    micBtn.classList.remove("active");
-    stopRecording(false);
-    console.log("Speech recognition stopped.");
-  }
-});
+if (micBtn) {
+  micBtn.addEventListener("click", async () => {
+    if (userId === 0 && conversations[currentChatId].messages.length > GUEST_MESSEGE_LIMIT) {
+      alert("Bạn đã gửi quá nhiều tin nhắn. Vui lòng bắt đầu cuộc trò chuyện mới.");
+      return;
+    }
+    if (!isListening) {
+      isListening = true;
+      micBtn.classList.add("active");
+      startRecording();
+      console.log("Speech recognition started for both languages.");
+    } else {
+      isListening = false;
+      micBtn.classList.remove("active");
+      stopRecording(false);
+      console.log("Speech recognition stopped.");
+    }
+  });
+}
 
-sendBtn.addEventListener("click", sendMessage);
-userInput.addEventListener("keypress", async (e) => {
-  if (e.key === "Enter") {
+if (sendBtn) {
+  sendBtn.addEventListener("click", () => {
+    if (userId === 0 && conversations[currentChatId].messages.length > GUEST_MESSEGE_LIMIT) {
+      alert("Bạn đã gửi quá nhiều tin nhắn. Vui lòng bắt đầu cuộc trò chuyện mới.");
+      return;
+    }
     sendMessage();
-  }
-});
-newChatBtn.addEventListener("click", startNewChat);
+  });
+}
+
+if (userInput) {
+  userInput.addEventListener("keypress", async (e) => {
+    if (e.key === "Enter") {
+      sendMessage();
+    }
+  });
+}
+
+if (newChatBtn) {
+  newChatBtn.addEventListener("click", startNewChat);
+}
 
 // Suggestion click
 if (suggestions) {
@@ -317,6 +362,7 @@ function addThinkingMessage() {
 
 async function sendMessage() {
   const message = userInput.value.trim();
+  const url = userId !== 0 ? `/chat` : "/chat-guest"; // Dùng endpoint khác cho khách
 
   console.log("Sending message...", message);
   if (message && currentChatId) {
@@ -327,7 +373,7 @@ async function sendMessage() {
     const suggestionPrompt = `Dựa trên nội dung sau, hãy gợi ý đúng 3 câu hỏi tiếp theo mà người dùng có thể hỏi để tiếp tục cuộc trò chuyện. 
 Chỉ trả lời bằng một mảng JSON, không thêm bất kỳ giải thích nào, ví dụ: ["Câu hỏi 1", "Câu hỏi 2", "Câu hỏi 3"].
 Nội dung: "${message}"`;
-    await fetch("/chat", {
+    await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -475,7 +521,7 @@ async function uploadAudio(audioBlob) {
       sendMessage(); // Send transcription as a text message
     } else {
       console.error("Audio upload failed:", data.error || "Unknown error");
-      alert("Failed to upload audio.");
+      alert("You speak too fast. Please try again.");
     }
   } catch (error) {
     console.error("Network error during audio upload:", error);

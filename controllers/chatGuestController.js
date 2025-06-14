@@ -2,57 +2,17 @@
 
 const controller = {};
 const models = require("../models");
-
-const azureOpenAI = require("../index").default.azureOpenAI;
+const openAI = require("../index").default.openAI;
 
 controller.showChat = async (req, res) => {
-  let userId = isNaN(req.params.userId) ? 1 : parseInt(req.params.userId);
-  if (userId === 0) {
-    console.log("User ID is 0, returning guest chat view.");
-    return res.render("chat-guest", { userId, messages: [], conversationId: null });
-  }
-
-  const user = await models.user.findAll({
-    where: {
-      id: userId,
-    },
-  });
-
-  if (!user || user.length === 0) {
-    console.log("User not found, returning guest chat view.");
-    return res.render("chat-guest", { userId, messages: [], conversationId: null });
-  }
-  try {
-    const conversations = await models.conversation.findAll({
-      where: {
-        user_id: userId, // Assuming you want to filter by a specific user ID
-      },
-      include: [
-        {
-          model: models.message,
-          as: "messages", // Alias defined in the association
-          order: [["created", "ASC"]], // Order messages by created in ascending order
-        },
-      ],
-    });
-    let messages = conversations[0]?.messages || [];
-    let conversationId = conversations[0]?.id || null; // Default to null if no conversations found
-    let email = user[0].email;
-
-    console.log("Messages userId:", userId, conversationId, user[0].email);
-
-    return res.render("chat", { messages, userId, conversationId, email });
-  } catch (error) {
-    console.error("Unable to connect to the database:", error);
-    return res.status(500).render("error", { message: "Failed to retrieve chat messages" });
-  }
+  return res.render("chat-guest");
 };
 
 controller.createChatMessage = async (req, res) => {
   const { message } = req.body;
   try {
     // 1. Lấy câu trả lời chính
-    const completion = await azureOpenAI.chat.completions.create({
+    const completion = await openAI.chat.completions.create({
       model: "gpt-4o-mini",
       max_completion_tokens: 1000,
       temperature: 0.7,
@@ -66,7 +26,7 @@ controller.createChatMessage = async (req, res) => {
         {
           role: "system",
           content:
-            "You are a friendly English-speaking partner helping the user practice spoken English. Keep your responses natural, clear, and conversational. Encourage the user to speak more by asking follow-up questions. Correct only major grammar or vocabulary mistakes, gently and briefly. Suggest better ways to say things if needed. If asked, provide pronunciation tips using phonetics or examples. Do not speak too formally unless requested. Help the user gain confidence and fluency, not just correctness. Use simple vocabulary unless the user wants advanced practice. I want your response always in English  unless I ask you to speak or translate to Vietnamese.",
+            "You are a friendly English-speaking partner helping the user practice spoken English. Keep your responses natural, clear, and conversational. Encourage the user to speak more by asking follow-up questions. Correct only major grammar or vocabulary mistakes, gently and briefly. Suggest better ways to say things if needed. If asked, provide pronunciation tips using phonetics or examples. Do not speak too formally unless requested. Help the user gain confidence and fluency, not just correctness. Use simple vocabulary unless the user wants advanced practice. I want your response always in English unless I ask you to speak or translate to Vietnamese.",
         },
       ],
     });
@@ -131,7 +91,7 @@ controller.handleChatMessage = async (msg) => {
   } catch (error) {
     console.log("Error saving message to database:", error);
   }
-  const response = await customOpenAI.chat.completions.create({
+  const response = await openAIChat.chat.completions.create({
     model: "gpt-4o-mini",
     max_completion_tokens: 1000,
     temperature: 0.7,

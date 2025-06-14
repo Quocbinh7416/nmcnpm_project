@@ -11,7 +11,7 @@ const ffmpegPath = require("ffmpeg-static");
 const ffmpeg = require("fluent-ffmpeg");
 ffmpeg.setFfmpegPath(ffmpegPath);
 
-const googleClient = require("../index").default; // Import the Google Speech-to-Text client
+const googleClient = require("../index").default.googleClient; // Import the Google Speech-to-Text client
 
 const uploadsDir = path.join(__dirname, "uploads");
 // Ensure the uploads directory exists
