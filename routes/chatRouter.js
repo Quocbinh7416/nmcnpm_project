@@ -10,5 +10,7 @@ router.use(userController.isLoggedIn);
 router.get("/:userId", controller.showChat);
 
 router.post("/", controller.createChatMessage);
+router.post("/conversations", controller.createConversation);
+router.delete("/conversations/:id", controller.deleteConversation);
 
 module.exports = router;
