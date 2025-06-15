@@ -16,6 +16,7 @@ if (config.use_env_variable) {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
+// Load models
 fs
   .readdirSync(__dirname)
   .filter(file => {
@@ -31,12 +32,18 @@ fs
     db[model.name] = model;
   });
 
+// Set up associations
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
-    db[modelName].associate(db);
+    try {
+      db[modelName].associate(db);
+    } catch (error) {
+      console.error(`Error setting up associations for model ${modelName}:`, error);
+    }
   }
 });
 
+// Export models and sequelize instance
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 

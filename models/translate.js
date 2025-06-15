@@ -81,11 +81,14 @@ module.exports = (sequelize, DataTypes) => {
    * @param {Object} models - Các model đã được định nghĩa
    */
   Translate.associate = function(models) {
-    // Mỗi bản dịch thuộc về một user
-    Translate.belongsTo(models.User, {
-      foreignKey: 'userId',
-      as: 'user'
-    });
+    // Kiểm tra xem models.User có tồn tại không
+    if (models.User) {
+      // Mỗi bản dịch thuộc về một user
+      Translate.belongsTo(models.User, {
+        foreignKey: 'userId',
+        as: 'user'
+      });
+    }
   };
 
   /**
