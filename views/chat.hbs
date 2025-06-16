@@ -62,8 +62,128 @@
                 <button class="btn btn-link" id="send-btn" title="Gửi"><i class="fa fa-paper-plane"></i></button>
             </div>
         </div>
+        
+        <!-- Translation Area -->
+        <div class="translation-area p-3 border-top">
+            <div class="form-group">
+                <label for="english-text" class="form-label">English Text</label>
+                <textarea id="english-text" class="form-control" rows="4" placeholder="Enter or paste English text here..."></textarea>
+            </div>
+            <div id="translation-icon" class="translation-icon d-none">
+                <i class="fa fa-language"></i>
+            </div>
+            <div id="translation-result" class="translation-result mt-2 d-none">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Translation</h5>
+                        <p id="translated-text" class="card-text"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 </div>
 
 <!-- Back to Top -->
 <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+<!-- Add CSS for translation functionality -->
+<style>
+    .translation-area {
+        position: relative;
+    }
+    
+    #english-text {
+        font-size: 16px;
+        line-height: 1.6;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        resize: vertical;
+    }
+    
+    #english-text::selection {
+        background-color: #007bff;
+        color: white;
+    }
+    
+    .translation-icon {
+        position: absolute;
+        background-color: #007bff;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+    }
+    
+    .translation-icon:hover {
+        transform: scale(1.1);
+    }
+    
+    .translation-result {
+        background-color: #f8f9fa;
+        border-radius: 4px;
+        padding: 10px;
+    }
+</style>
+
+<!-- Add JavaScript for translation functionality -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const englishText = document.getElementById('english-text');
+        const translationIcon = document.getElementById('translation-icon');
+        const translationResult = document.getElementById('translation-result');
+        const translatedText = document.getElementById('translated-text');
+        
+        // Handle text selection
+        englishText.addEventListener('mouseup', function(e) {
+            const selectedText = window.getSelection().toString().trim();
+            
+            if (selectedText) {
+                // Get selection coordinates
+                const selection = window.getSelection();
+                const range = selection.getRangeAt(0);
+                const rect = range.getBoundingClientRect();
+                
+                // Position translation icon
+                translationIcon.style.top = `${rect.bottom + window.scrollY + 5}px`;
+                translationIcon.style.left = `${rect.left + window.scrollX}px`;
+                translationIcon.classList.remove('d-none');
+                
+                // Store selected text for translation
+                translationIcon.dataset.text = selectedText;
+            } else {
+                translationIcon.classList.add('d-none');
+            }
+        });
+        
+        // Handle click outside to hide translation icon
+        document.addEventListener('click', function(e) {
+            if (!translationIcon.contains(e.target) && !englishText.contains(e.target)) {
+                translationIcon.classList.add('d-none');
+            }
+        });
+        
+        // Handle translation icon click
+        translationIcon.addEventListener('click', function() {
+            const textToTranslate = this.dataset.text;
+            if (textToTranslate) {
+                // Show loading state
+                translatedText.textContent = 'Translating...';
+                translationResult.classList.remove('d-none');
+                
+                // Call translation API (to be implemented)
+                // For now, just show a placeholder
+                setTimeout(() => {
+                    translatedText.textContent = `[Translation of: ${textToTranslate}]`;
+                }, 500);
+            }
+        });
+    });
+</script>
