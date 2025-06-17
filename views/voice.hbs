@@ -1,0 +1,37 @@
+<div class="app-container container">
+    <h1 class="app-title">
+        <i class="fa fa-microphone-alt"></i>Voice Chat AI
+    </h1>
+    <p class="status-message" id="statusMessage">Click "Start Recording" to begin your conversation.</p>
+
+    <div id="compatibilityWarning" class="warning-box hidden">
+        <i class="fa fa-exclamation-triangle"></i>
+        <span>Your browser does not support the Web Speech API. Please try Chrome, Edge, or Firefox.</span>
+    </div>
+
+    <textarea id="outputTranscript" class="text-area" placeholder="Your transcribed text will appear here..."
+        readonly></textarea>
+
+    <p class="ai-response-label">AI Response:</p>
+    <div id="aiResponse" class="ai-response-area">
+        <span class="text-gray-500">Waiting for your input...</span>
+    </div>
+    <div id="aiLoading" class="loading-spinner hidden">
+        <div class="spinner"></div>
+        <span>AI is thinking...</span>
+    </div>
+
+    <div class="button-group">
+        <button id="startButton" class="my-btn my-btn-primary">
+            <i class="fa fa-play mr-2"></i>Start Recording
+        </button>
+        <button id="stopButton" class="my-btn my-btn-danger" disabled>
+            <i class="fa fa-stop mr-2"></i>Stop Recording
+        </button>
+    </div>
+
+    <p class="footer-text">
+        Powered by your browser's Web Speech API and Gemini AI.
+        <br>Microphone permission required.
+    </p>
+</div>

@@ -80,9 +80,11 @@
                         {{#if isLoggedIn}}
                         <a href="/chat/{{userId}}" class="nav-item nav-link active">Home</a>
                         <a href="/chat/{{userId}}" class="nav-item nav-link">Chat</a>
+                        <a href="/chat/{{userId}}" class="nav-item nav-link">Voice</a>
                         {{else}}
                         <a href="/" class="nav-item nav-link active">Home</a>
                         <a href="/chat-guest" class="nav-item nav-link">Chat</a>
+                        <a href="/chat-guest/voice" class="nav-item nav-link">Call</a>
                         {{/if}}
                         {{!-- <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
@@ -122,6 +124,7 @@
     <script src="/js/client.js"></script>
     <script src="/js/script.js"></script>
     <script src="/js/account.js"></script>
+    <script src="/js/voice.js"></script>
 </body>
 
 </html>

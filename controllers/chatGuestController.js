@@ -3,6 +3,7 @@
 const controller = {};
 const models = require("../models");
 const openAI = require("../index").default.openAI;
+const azureOpenAI = require("../index").default.azureOpenAI;
 
 const DEFAULT_SUGGESTIONS = ["Can you explain more details?", "Give me an example.", "What are the pros and cons?", "How can I apply this in real life?", "What are the next steps?", "Can you suggest further reading?"];
 const DEFAULT_CONTEXT_SYSTEM =
@@ -10,6 +11,10 @@ const DEFAULT_CONTEXT_SYSTEM =
 
 controller.showChat = async (req, res) => {
   return res.render("chat-guest");
+};
+
+controller.showVoice = async (req, res) => {
+  return res.render("voice");
 };
 
 controller.createChatMessage = async (req, res) => {
@@ -65,6 +70,37 @@ controller.createChatMessage = async (req, res) => {
     }
     if (suggestions.length > 3) suggestions = suggestions.slice(0, 3);
     res.json({ reply, suggestions });
+  } catch (error) {
+    console.error("Error calling OpenAI:", error);
+    res.status(500).json({ error: "Failed to get response from OpenAI" });
+  }
+};
+
+controller.createChatMessageV2 = async (req, res) => {
+  console.log("Starting createChatMessageV2 in chatGuestController.js");
+
+  const { message } = req.body;
+  try {
+    // 1. Lấy câu trả lời chính
+    const completion = await azureOpenAI.chat.completions.create({
+      model: "gpt-4o-mini",
+      max_completion_tokens: 1000,
+      temperature: 0.7,
+      top_p: 1,
+      messages: [
+        {
+          role: "user",
+          content: message,
+        },
+
+        {
+          role: "system",
+          content: DEFAULT_CONTEXT_SYSTEM,
+        },
+      ],
+    });
+    const reply = completion.choices[0].message.content;
+    res.json({ reply });
   } catch (error) {
     console.error("Error calling OpenAI:", error);
     res.status(500).json({ error: "Failed to get response from OpenAI" });
