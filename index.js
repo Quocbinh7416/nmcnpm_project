@@ -117,6 +117,7 @@ app.use(flash());
 app.use("/", require("./routes/indexRouter"));
 app.use("/upload-audio", require("./routes/audioRouter"));
 app.use("/chat-guest", require("./routes/chatGuestRouter"));
+app.use("/chat-voice", require("./routes/chatGuestRouter"));
 
 app.use("/users", require("./routes/userRouter"));
 // middleware khoi tao gio hang
