@@ -164,9 +164,9 @@ if (micBtn) {
       startRecording();
       console.log("Speech recognition started for both languages.");
     } else {
-      await stopRecording(false);
       isListening = false;
       micBtn.classList.remove("active");
+      stopRecording(false);
       console.log("Speech recognition stopped.");
     }
   });
@@ -463,14 +463,14 @@ async function startRecording() {
   audioChunks = [];
   mediaRecorder = new MediaRecorder(stream);
 
-  mediaRecorder.ondataavailable = async (event) => {
+  mediaRecorder.ondataavailable = (event) => {
     audioChunks.push(event.data);
   };
 
   mediaRecorder.onstop = async () => {
     if (!isCancelled && audioChunks.length > 0) {
       const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
-      await uploadAudio(audioBlob);
+      uploadAudio(audioBlob);
     } else {
       console.log("Recording cancelled.");
     }
@@ -486,9 +486,8 @@ async function startRecording() {
 }
 
 // Function to stop recording (and potentially upload)
-async function stopRecording(wasCancelledByButton) {
+function stopRecording(wasCancelledByButton) {
   if (isRecording) {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
     isCancelled = wasCancelledByButton; // Set cancellation flag
     mediaRecorder.stop();
     // clearInterval(recordingTimerInterval);

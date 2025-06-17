@@ -13,10 +13,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      title: {
-        type: DataTypes.STRING,
-        allowNull: false, // Title can be null if not provided
-      },
     },
     {
       tableName: "conversation",

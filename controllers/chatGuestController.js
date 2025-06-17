@@ -9,8 +9,6 @@ controller.showChat = async (req, res) => {
 };
 
 controller.createChatMessage = async (req, res) => {
-  console.log("Starting createChatMessage in chatGuestController.js");
-
   const { message } = req.body;
   try {
     // 1. Lấy câu trả lời chính
@@ -33,6 +31,8 @@ controller.createChatMessage = async (req, res) => {
       ],
     });
     const reply = completion.choices[0].message.content;
+    console.log("OpenAI reply:", completion);
+    console.log("OpenAI reply:", message);
 
     // 2. Lấy suggestions liên quan
     // const suggestionPrompt = `Dựa trên nội dung sau, hãy gợi ý đúng 3 câu hỏi tiếp theo mà người dùng có thể hỏi để tiếp tục cuộc trò chuyện. Trả lời bằng một mảng JSON, ví dụ: ["Câu hỏi 1", "Câu hỏi 2", "Câu hỏi 3"].\nNội dung: "${reply}"`;
