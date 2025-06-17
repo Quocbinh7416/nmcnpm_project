@@ -9,7 +9,7 @@
     <meta content="Bootstrap Ecommerce Template Free Download" name="description">
 
     <!-- Favicon -->
-    <link href="img/favicon.svg" rel="icon">
+    <link href="/img/favicon.svg" rel="icon">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700&display=swap" rel="stylesheet">
@@ -77,10 +77,11 @@
 
                 <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
                     <div class="navbar-nav m-auto">
-                        <a href="/" class="nav-item nav-link active">Home</a>
                         {{#if isLoggedIn}}
+                        <a href="/chat/{{userId}}" class="nav-item nav-link active">Home</a>
                         <a href="/chat/{{userId}}" class="nav-item nav-link">Chat</a>
                         {{else}}
+                        <a href="/" class="nav-item nav-link active">Home</a>
                         <a href="/chat-guest" class="nav-item nav-link">Chat</a>
                         {{/if}}
                         {{!-- <div class="nav-item dropdown">

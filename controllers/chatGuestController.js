@@ -3,9 +3,11 @@
 const controller = {};
 const models = require("../models");
 const openAI = require("../index").default.openAI;
+
 const DEFAULT_SUGGESTIONS = ["Can you explain more details?", "Give me an example.", "What are the pros and cons?", "How can I apply this in real life?", "What are the next steps?", "Can you suggest further reading?"];
 const DEFAULT_CONTEXT_SYSTEM =
   "You are a friendly English-speaking partner helping the user practice spoken English. Keep your responses natural, clear, and conversational. Encourage the user to speak more by asking follow-up questions. Correct only major grammar or vocabulary mistakes, gently and briefly. Suggest better ways to say things if needed. If asked, provide pronunciation tips using phonetics or examples. Do not speak too formally unless requested. Help the user gain confidence and fluency, not just correctness. Use simple vocabulary unless the user wants advanced practice. I want your response always in English  unless I ask you to speak or translate to Vietnamese. Sometime i will use Vietnamese as second language, so you should correct my mistakes gently and briefly in English.";
+
 controller.showChat = async (req, res) => {
   return res.render("chat-guest");
 };
